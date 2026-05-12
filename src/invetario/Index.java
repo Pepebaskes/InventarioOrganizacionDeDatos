@@ -93,6 +93,8 @@ public class Index extends JFrame {
 
     // Etiqueta del texto resumen superior.
     private JLabel lblResumenSuperior;
+    // Etiqueta del titulo superior principal.
+    private JLabel lblTituloPrincipal;
     // Etiqueta de la tarjeta de total de productos.
     private JLabel lblTotalProductos;
     // Etiqueta de la tarjeta de productos activos.
@@ -123,6 +125,10 @@ public class Index extends JFrame {
     private JButton btnMenuAnalisis;
     private JButton btnMenuReportes;
     private JButton btnMenuConfiguracion;
+    // Panel del modulo de movimientos dentro del dashboard.
+    private MovimientoInventarioPanel panelMovimientoInventario;
+    // Panel del modulo de configuracion dentro del dashboard.
+    private ConfiguracionPanel panelConfiguracion;
 
 
     // CONSTRUCTOR
@@ -280,11 +286,13 @@ public class Index extends JFrame {
         btnMenuCatalogo = crearBotonMenu("Catalogo de Productos");
         // Dejamos marcado visualmente el modulo que si funcionara por ahora.
         marcarBotonMenuActivo(btnMenuCatalogo);
+        // Al dar clic mostramos el catalogo dentro del dashboard.
+        btnMenuCatalogo.addActionListener(e -> mostrarVista("CATALOGO"));
 
         // Creamos el boton del modulo movimientos.
         btnMenuMovimientos = crearBotonMenu("Movimientos");
-        // Dejamos este boton solo visible para usarlo despues.
-        deshabilitarBotonMenu(btnMenuMovimientos);
+        // Al dar clic mostramos movimientos en la misma interfaz.
+        btnMenuMovimientos.addActionListener(e -> mostrarVista("MOVIMIENTOS"));
 
         // Creamos el boton del modulo analisis.
         btnMenuAnalisis = crearBotonMenu("Analisis");
@@ -298,8 +306,8 @@ public class Index extends JFrame {
 
         // Creamos el boton del modulo configuracion.
         btnMenuConfiguracion = crearBotonMenu("Configuracion");
-        // Dejamos este boton solo visible para usarlo despues.
-        deshabilitarBotonMenu(btnMenuConfiguracion);
+        // Al dar clic mostramos configuracion dentro del dashboard.
+        btnMenuConfiguracion.addActionListener(e -> mostrarVista("CONFIGURACION"));
 
         // Agregamos botones al menu con separacion.
         panelMenuLateral.add(crearContenedorBotonMenu(btnMenuDashboard));
@@ -355,8 +363,30 @@ public class Index extends JFrame {
         // Agregamos el encabezado superior.
         panelTrabajo.add(crearPanelEncabezado(), BorderLayout.NORTH);
 
-        // Dejamos el contenido principal enfocado solo en el catalogo de productos.
-        panelTrabajo.add(crearVistaCatalogo(), BorderLayout.CENTER);
+        // Creamos layout de tarjetas para unificar modulos en la misma interfaz.
+        layoutTarjetas = new CardLayout();
+        panelTarjetas = new JPanel(layoutTarjetas);
+        panelTarjetas.setOpaque(false);
+
+        // Agregamos tarjeta de catalogo.
+        panelTarjetas.add(crearVistaCatalogo(), "CATALOGO");
+        // Creamos y agregamos tarjeta de movimientos.
+        panelMovimientoInventario = new MovimientoInventarioPanel();
+        // Conectamos callback para refrescar catalogo automaticamente al guardar movimientos.
+        panelMovimientoInventario.setOnMovimientoGuardado(() -> {
+            // Recargamos lista en memoria desde CSV para traer stock actualizado.
+            productoDAO.recargarProductosDesdeArchivo();
+            // Refrescamos la tabla visual del catalogo.
+            actualizarTablaProductos();
+        });
+        panelTarjetas.add(panelMovimientoInventario, "MOVIMIENTOS");
+        // Creamos y agregamos tarjeta de configuracion.
+        panelConfiguracion = new ConfiguracionPanel();
+        panelTarjetas.add(panelConfiguracion, "CONFIGURACION");
+
+        // Mostramos catalogo por defecto.
+        layoutTarjetas.show(panelTarjetas, "CATALOGO");
+        panelTrabajo.add(panelTarjetas, BorderLayout.CENTER);
 
         // Regresamos el panel armado.
         return panelTrabajo;
@@ -383,7 +413,7 @@ public class Index extends JFrame {
         panelTextos.setLayout(new BoxLayout(panelTextos, BoxLayout.Y_AXIS));
 
         // Creamos el titulo principal.
-        JLabel lblTituloPrincipal = new JLabel("Catalogo de Productos");
+        lblTituloPrincipal = new JLabel("Catalogo de Productos");
         // Le damos color oscuro.
         lblTituloPrincipal.setForeground(colorTexto);
         // Le damos tamano grande.
@@ -626,12 +656,30 @@ public class Index extends JFrame {
 
     // Este metodo cambia la vista central segun el boton del menu.
     private void mostrarVista(String nombreVista) {
+        // Si las tarjetas aun no existen no hacemos nada.
+        if (layoutTarjetas == null || panelTarjetas == null) {
+            return;
+        }
+
+        // Si entra a movimientos refrescamos datos del panel.
+        if ("MOVIMIENTOS".equals(nombreVista) && panelMovimientoInventario != null) {
+            panelMovimientoInventario.refrescarDatos();
+        }
+        // Si entra a configuracion refrescamos datos actuales.
+        if ("CONFIGURACION".equals(nombreVista) && panelConfiguracion != null) {
+            panelConfiguracion.refrescarDatos();
+        }
+
         // Mostramos la tarjeta indicada.
         layoutTarjetas.show(panelTarjetas, nombreVista);
         // Actualizamos el estilo del menu lateral segun la opcion elegida.
         actualizarBotonesMenu(nombreVista);
         // Actualizamos el texto superior segun el modulo.
         cambiarTextoEncabezado(nombreVista);
+        // Mostramos boton registrar solo en catalogo.
+        if (btnRegistrarProducto != null) {
+            btnRegistrarProducto.setVisible("CATALOGO".equals(nombreVista));
+        }
         // Actualizamos el dashboard por si hubo cambios.
         //actualizarResumenDashboard();
     }
@@ -676,12 +724,33 @@ public class Index extends JFrame {
     private void cambiarTextoEncabezado(String nombreVista) {
         // Si el modulo es dashboard mostramos una descripcion.
         if ("DASHBOARD".equals(nombreVista)) {
+            if (lblTituloPrincipal != null) {
+                lblTituloPrincipal.setText("Inicio / Dashboard");
+            }
             lblResumenSuperior.setText("Resumen general del inventario, alertas y datos importantes.");
         // Si el modulo es catalogo mostramos otra descripcion.
         } else if ("CATALOGO".equals(nombreVista)) {
+            if (lblTituloPrincipal != null) {
+                lblTituloPrincipal.setText("Catalogo de Productos");
+            }
             lblResumenSuperior.setText("Usa esta pantalla base para conectar tus metodos de registro, consulta y edicion.");
+        // Si el modulo es movimientos mostramos descripcion de captura.
+        } else if ("MOVIMIENTOS".equals(nombreVista)) {
+            if (lblTituloPrincipal != null) {
+                lblTituloPrincipal.setText("Movimientos de Inventario");
+            }
+            lblResumenSuperior.setText("Registra entradas, salidas y ajustes en la misma interfaz del sistema.");
+        // Si el modulo es configuracion mostramos su descripcion.
+        } else if ("CONFIGURACION".equals(nombreVista)) {
+            if (lblTituloPrincipal != null) {
+                lblTituloPrincipal.setText("Configuracion");
+            }
+            lblResumenSuperior.setText("Registra y edita costo por pedido, costo de mantenimiento y tiempo de entrega.");
         // Si es otro modulo mostramos un mensaje general.
         } else {
+            if (lblTituloPrincipal != null) {
+                lblTituloPrincipal.setText("Sistema de Inventario");
+            }
             lblResumenSuperior.setText("Esta vista ya esta preparada para que conectes tu logica despues.");
         }
     }
@@ -690,19 +759,27 @@ public class Index extends JFrame {
     Metodo que abre el dialog para el formulario de registrar con el boton
     */
     private void accionBotonRegistrar() {
-        // Abrimos el formulario visual vacio.
+        // Abrimos el formulario en modo registro.
         abrirFormularioProducto(null);
     }
+    
+    
 
     /*
     Metodo para le boton de editar
     */
-    private Producto accionBotonEditar() {
-        int fila = tblCatalogoProductos.getSelectedRow();
-            if (fila != -1) {
-                return listaProductos.get(fila); // <--- Aquí es donde se equivoca al ordenar
-            }
-        return null;
+    private void accionBotonEditar() {
+        // Obtenemos el producto seleccionado en la tabla.
+        Producto productoSeleccionado = obtenerProductoSeleccionado();
+        // Si no hay producto seleccionado, avisamos y salimos.
+        if (productoSeleccionado == null) {
+            JOptionPane.showMessageDialog(this,
+                    "Selecciona un producto de la tabla para editar.",
+                    "Editar producto", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        // Abrimos el formulario en modo edicion.
+        abrirFormularioProducto(productoSeleccionado);
     }
 
     // Este metodo se ejecuta al dar clic en activar o desactivar.
@@ -756,6 +833,12 @@ public class Index extends JFrame {
             // AQUI puedes llamar tu metodo real para borrar del archivo o base de datos.
             // Ejemplo: metodos.eliminarProducto(productoSeleccionado.clave);
         }
+    }
+
+    // Este metodo abre la ventana del modulo de movimientos.
+    private void abrirModuloMovimientos() {
+        // Redireccionamos a la tarjeta unificada de movimientos.
+        mostrarVista("MOVIMIENTOS");
     }
 
 
@@ -831,19 +914,17 @@ public class Index extends JFrame {
     Este metodo obtiene el producto seleccionado en tabla.
     */
     private Producto obtenerProductoSeleccionado() {
-        // Obtenemos la fila seleccionada
-        int filaSeleccionada = tblCatalogoProductos.getSelectedRow();
-
-        // Si no hay fila seleccionada mostramos aviso
-        if (filaSeleccionada < 0) {
-            JOptionPane.showMessageDialog(this, "Selecciona un producto en la tabla.", "Aviso", JOptionPane.WARNING_MESSAGE);
+        int filaVista = tblCatalogoProductos.getSelectedRow();
+        if (filaVista == -1) {
             return null;
         }
 
-        // Obtenemos la clave de la fila seleccionada
-        String claveSeleccionada = modeloTablaProductos.getValueAt(filaSeleccionada, 0).toString();
-        // Pedimos al DAO el producto correspondiente a esa clave.
-        return productoDAO.buscarPorClave(claveSeleccionada);
+        // Convertimos el indice visual al indice real del modelo.
+        int filaModelo = tblCatalogoProductos.convertRowIndexToModel(filaVista);
+        // Tomamos la clave real de esa fila.
+        String claveProducto = modeloTablaProductos.getValueAt(filaModelo, 0).toString();
+        // Buscamos el objeto directo en DAO para evitar desfases por orden/filtro.
+        return productoDAO.buscarPorClave(claveProducto);
     }
 
     // 
@@ -1300,6 +1381,9 @@ public class Index extends JFrame {
             txtDemandaProducto.setName("txtDemandaProducto");
             chkProductoActivo.setName("chkProductoActivo");
 
+            // Configuramos limpieza visual de campos rojos mientras el usuario escribe.
+            configurarLimpiezaVisualCamposEnTiempoReal();
+
             // Configuramos la tecla Enter para avanzar al siguiente campo.
             configurarEnterComoTab(txtClaveProducto, txtNombreProducto);
             // Configuramos Enter para bajar de nombre a categoria.
@@ -1391,6 +1475,10 @@ public class Index extends JFrame {
             darTamanoBotonDialogo(btnGuardarProductoDialogo);
             // Al hacer clic guardamos visualmente.
             btnGuardarProductoDialogo.addActionListener(e -> accionGuardarDialogo());
+            // Configuramos Enter directo en el boton guardar.
+            configurarEnterEnGuardar();
+            // Marcamos guardar como boton por defecto del dialogo.
+            getRootPane().setDefaultButton(btnGuardarProductoDialogo);
 
             // Configuramos Enter para pasar del estado al boton guardar.
             configurarEnterComoTab(chkProductoActivo, btnGuardarProductoDialogo);
@@ -1557,6 +1645,18 @@ public class Index extends JFrame {
                 return;
             }
 
+            // Revisamos si costo es mayor o igual a precio para mostrar advertencia y no cerrar formulario.
+            boolean costoMayorOIgualPrecio = esCostoMayorOIgualPrecio(costo, precio);
+            if (costoMayorOIgualPrecio) {
+                int respuesta = JOptionPane.showConfirmDialog(this,
+                        "El costo es mayor o igual al precio. ¿Deseas guardar de todos modos?",
+                        "Advertencia", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                if (respuesta != JOptionPane.YES_OPTION) {
+                    txtPrecioProducto.requestFocusInWindow();
+                    return;
+                }
+            }
+
             Producto productoFormulario = new Producto(clave, codigoCategoria, categoria, nombre, costo, precio, stockActual, stockMinimo, diasEntrega, demanda, activo);
             try {
                 // enviamos el producto guardado a dao
@@ -1684,6 +1784,19 @@ public class Index extends JFrame {
         }
 
         /*
+        Metodo para saber si costo es mayor o igual que precio.
+        */
+        private boolean esCostoMayorOIgualPrecio(String costo, String precio) {
+            try {
+                double costoNumero = Double.parseDouble(costo.replace(",", "."));
+                double precioNumero = Double.parseDouble(precio.replace(",", "."));
+                return costoNumero >= precioNumero;
+            } catch (NumberFormatException ex) {
+                return false;
+            }
+        }
+
+        /*
         metodo para que el campo marque error si no tiene nada
         */
         private void marcarCampoConError(JTextField campoTexto) {
@@ -1703,11 +1816,68 @@ public class Index extends JFrame {
          Este metodo configura la tecla Enter para pasar al siguiente componente.
         */
         private void configurarEnterComoTab(JComponent componenteActual, JComponent componenteSiguiente) {
+            componenteActual.setFocusTraversalKeysEnabled(false);
             componenteActual.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("ENTER"), "moverSiguiente");
+            componenteActual.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("TAB"), "moverSiguiente");
             componenteActual.getActionMap().put("moverSiguiente", new AbstractAction() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent e) {
                     componenteSiguiente.requestFocusInWindow();
+                }
+            });
+        }
+
+        /*
+         Este metodo configura quitar color rojo en tiempo real mientras se llena el campo.
+        */
+        private void configurarLimpiezaVisualCamposEnTiempoReal() {
+            configurarQuitarErrorAlEscribir(txtClaveProducto);
+            configurarQuitarErrorAlEscribir(txtNombreProducto);
+            configurarQuitarErrorAlEscribir(txtCostoProducto);
+            configurarQuitarErrorAlEscribir(txtPrecioProducto);
+            configurarQuitarErrorAlEscribir(txtStockActualProducto);
+            configurarQuitarErrorAlEscribir(txtStockMinimoProducto);
+            configurarQuitarErrorAlEscribir(txtDiasEntregaProducto);
+            configurarQuitarErrorAlEscribir(txtDemandaProducto);
+        }
+
+        /*
+         Este metodo escucha cambios de un campo y quita el rojo cuando ya tiene texto.
+        */
+        private void configurarQuitarErrorAlEscribir(JTextField campoTexto) {
+            campoTexto.getDocument().addDocumentListener(new DocumentListener() {
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                    quitarErrorSiTieneContenido();
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    quitarErrorSiTieneContenido();
+                }
+
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+                    quitarErrorSiTieneContenido();
+                }
+
+                private void quitarErrorSiTieneContenido() {
+                    if (!campoTexto.getText().trim().isEmpty()) {
+                        restaurarCampoNormal(campoTexto);
+                    }
+                }
+            });
+        }
+
+        /*
+         Este metodo asegura que Enter ejecute guardar cuando el foco esta en el boton.
+        */
+        private void configurarEnterEnGuardar() {
+            btnGuardarProductoDialogo.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("ENTER"), "guardarConEnter");
+            btnGuardarProductoDialogo.getActionMap().put("guardarConEnter", new AbstractAction() {
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                    btnGuardarProductoDialogo.doClick();
                 }
             });
         }

@@ -4,12 +4,10 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/rafae/OneDrive/Documents/NetBeansProject/Invetario/src/invetario/Producto.java</file>
-            <file>file:/C:/Users/rafae/OneDrive/Documents/NetBeansProject/Invetario/src/invetario/MetodosCSV.java</file>
             <file>file:/C:/Users/rafae/OneDrive/Documents/NetBeansProject/Invetario/src/invetario/ProductoDAO.java</file>
-            <file>file:/C:/Users/rafae/OneDrive/Documents/NetBeansProject/Invetario/src/invetario/Invetario.java</file>
+            <file>file:/C:/Users/rafae/OneDrive/Documents/NetBeansProject/Invetario/MovimientoInventarioDetalle.csv</file>
             <file>file:/C:/Users/rafae/OneDrive/Documents/NetBeansProject/Invetario/src/invetario/Index.java</file>
-            <file>file:/C:/Users/rafae/OneDrive/Documents/NetBeansProject/Invetario/src/invetario/CategoriaProducto.java</file>
-            <file>file:/C:/Users/rafae/OneDrive/Documents/NetBeansProject/Invetario/productos.csv</file>
+            <file>file:/C:/Users/rafae/OneDrive/Documents/NetBeansProject/Invetario/MovimientoInventarioEncabezado.csv</file>
         </group>
     </open-files>
 </project-private>

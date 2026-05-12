@@ -3,7 +3,6 @@ package invetario;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JOptionPane;
 
 
 public class ProductoDAO {
@@ -150,10 +149,8 @@ public class ProductoDAO {
         // Validamos los datos recibidos antes de guardar.
         validarProducto(productoFormulario, productoEditar);
 
-        // clave con prefijo se ajusta
-        String claveFinal = ajustarClaveSegunCategoria(productoFormulario.getClave(), productoFormulario.getCodigoCategoria());
-        //guardamos la clave
-        productoFormulario.setClave(claveFinal);
+        // Guardamos solo la clave capturada por el usuario (sin prefijo de categoria).
+        productoFormulario.setClave(productoFormulario.getClave().trim());
 
         // Si es un registro nuevo agregamos el producto a la lista
         if (productoEditar == null) {
@@ -197,25 +194,9 @@ public class ProductoDAO {
             throw new IllegalArgumentException("No pueden ir campos vacios");
         }
         
-        if(precio < 0 || costo < 0){
+        if(precio <= 0 || costo <= 0){
                throw new IllegalArgumentException("No pueden ser cero ni negativs");
         }
-        
-        
-        
-        if (precio < costo) {
-            int respuesta = JOptionPane.showConfirmDialog(
-    null, 
-           "El precio es menor o igual al costo. ¿Deseas continuar?", 
-            "Advertencia", 
-            JOptionPane.YES_NO_OPTION, 
-           JOptionPane.WARNING_MESSAGE
-                );  
-
-       if (respuesta != JOptionPane.YES_OPTION) {
-         return; // O lanza una excepción si estás en el DAO para avisar al diálogo
-        }
-       
         if(diasEntrega < 1){
              throw new IllegalArgumentException("Los días de entrega no pueden ser menor a 1");
         }
@@ -224,19 +205,22 @@ public class ProductoDAO {
              throw new IllegalArgumentException("La demanda no puede ser menor a 1");
         }
 
+        if(stock < 0){
+             throw new IllegalArgumentException("El stock actual no puede ser menor a 0");
+        }
+
         // calidacion de stockminimo
         if (convertirTextoANumero(productoFormulario.getStockMinimo()) <= 0) {
             throw new IllegalArgumentException("El stock minimo no puede ser 0.");
         }
 
-        // acmodamos la clave para que se puede ver bien.
-        String claveFinal = ajustarClaveSegunCategoria(productoFormulario.getClave(), productoFormulario.getCodigoCategoria());
+        // Tomamos la clave tal cual la captura el usuario (sin mezclar con categoria).
+        String claveFinal = productoFormulario.getClave().trim();
 
         // que no se repita la clave
         if (existeClaveProducto(claveFinal, productoEditar)) {
             throw new IllegalArgumentException("La clave del producto ya existe. Debe ser unica.");
         }
-     }
     }
 
     /*
@@ -394,6 +378,13 @@ public class ProductoDAO {
         } catch (Exception ex) {
             listaProductos.clear();
         }
+    }
+
+    /*
+    Metodo publico para recargar la lista desde CSV cuando otro modulo cambia stock.
+    */
+    public void recargarProductosDesdeArchivo() {
+        cargarProductosDesdeArchivo();
     }
 
     /*

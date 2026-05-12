@@ -1,0 +1,22 @@
+noMovimiento,nombre,domicilio,lugar,fecha,tipoMovimiento,motivo
+1,Pepe,Marcelino Hernandez,El Grullo,2026-05-06,ENTRADA,Entrada de producto
+2,CobyGod,TSJ,El Grullo,2026-05-06,ENTRADA,Ola q ase
+3,kiko,conocido,tsj,2026-05-06,SALIDA,Hola
+4,prueba 3,conocido,conocido,2026-05-06,AJUSTE,´ajuste
+5,prueba,Conocido,Conocido,2026-05-06,AJUSTE,ajuste
+6,prueba 4,Conocido,Conocido,2026-05-06,ENTRADA,Prueba de sobreinventario
+7,Ricardo Puto,Autlan,Puto,2026-05-06,SALIDA,Ola k ase
+8,Ricarito,Alberto Padilla,El Grullo,2026-05-06,SALIDA,Salida
+9,Claudia Sheimbaum,Casa Blanca,CDMX,2026-05-06,SALIDA,
+10,Juan Carlos,Conocido,El Grullo,2026-05-06,ENTRADA,Prueba de Entrada
+11,hhhh,hhhh,hhh,2026-05-06,SALIDA,
+12,ppppp,ppppp,pppp,2026-05-06,AJUSTE,prueba de ajuste
+13,Conocido,Conocido,Pruebas,2026-05-07,ENTRADA,3
+14,Prueba Cobian,Conocido,Conocido,2026-05-07,ENTRADA,
+15,prueba cobian,conocido,conocido,2026-05-07,AJUSTE,inventario fijo
+16,Cobian,Centro,Grullo,2026-05-07,ENTRADA,
+17,hhhhh,hhhh,hhhhh,2026-05-08,ENTRADA,
+18,aaaaadsadsds,dssdfsfsf,sdfsfsfs,2026-05-08,ENTRADA,
+19,hhhhhhhhsdfgsd,dsfgdfgsdg,sdfgdgsdfsgd,2026-05-08,AJUSTE,gdgdfgdfg
+20,asddfasfsa,afdasdf,safasdf,2026-05-08,ENTRADA,safasdfasfd
+21,asfsdfasafas,asdfasfasdfsdfa,asdfasdfasdasdfaf,2026-05-08,AJUSTE,ajuste juan carlos

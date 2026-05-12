@@ -1,15 +1,22 @@
 codigo_producto,codigo_categoria,categoria,nombre,costo,precio,stock_actual,stock_minimo,dias_entrega,demanda_estimada,estado
-10-04-01-001,ELEC10,Audio y sonido,Laptop ASUS TUF A15 Gaming i7 NVIDIA 4060,18000,25000,12,5,10,3,Activo
-01-002,ELEC01,Computadoras y laptops,Laptop LENOVO IdeaPad 3,3000,6000,5,5,10,2,Activo
-06-003,ELEC06,Redes y conectividad,Modem Telmex,300,500,20,5,12,8,Activo
+10-04-01-001,ELEC10,Audio y sonido,Laptop ASUS TUF A15 Gaming i7 NVIDIA 4060,18000,25000,19,5,10,3,Activo
+01-002,ELEC05,Impresoras y escaneres,Laptop LENOVO IdeaPad 3,3000,6000,100,5,10,2,Activo
+06-003,ELEC06,Redes y conectividad,Modem Telmex,300,500,10,5,12,8,Activo
 03-002,ELEC03,Perifericos,Audifonos Hyperex Force,1000,1500,10,3,4,5,Activo
-02-001,ELEC02,Componentes de PC,Tarjet Gráfica NVIDIA 4070,8000,14000,8,5,10,3,Activo
-05-001,ELEC05,Impresoras y escaneres,Impresora LaserYet,200,300,20,10,10,300,Activo
-10-003,ELEC10,Audio y sonido,Bocinas,10,15,5,3,1,1,Activo
-10-004,ELEC10,Audio y sonido,Bocinas top,2,3,100,1,1,1,Activo
+05-02-001,ELEC05,Impresoras y escaneres,Tarjet Gráfica NVIDIA 4070,8000,14000,10,5,10,3,Activo
+05-001,ELEC11,Video y entretenimiento,Impresora LaserYet,200,300,2,10,10,300,Activo
+10-003,ELEC10,Audio y sonido,Bocinas,10,15,4,3,1,1,Activo
+10-004,ELEC10,Audio y sonido,Bocinas top,2,3,101,1,1,1,Activo
 06-002,ELEC06,Redes y conectividad,Switch Cisco,3000.50,5000,30,5,15,120,Activo
 01-005,ELEC01,Computadoras y laptops,Computadora Lenovo,4,5,0,0,1,10,Activo
-01-007,ELEC01,Computadoras y laptops,VivoBook A15,8000,7000,5,3,15,40,Activo
-01-008,ELEC01,Computadoras y laptops,Laptop Thinkpad E14,1000,2000,0,3,10,400,Activo
-08-8876,ELEC08,Accesorios para celulares,Funda para celular con cargador,300,200,1,1,1,1,Inactivo
+01-007,ELEC01,Computadoras y laptops,VivoBook A15,8000,7000,8,1,1,1,Activo
+01-008,ELEC01,Computadoras y laptops,Laptop Thinkpad E14,1000,2000,2,3,10,400,Activo
+08-8876,ELEC08,Accesorios para celulares,Funda para celular con cargador,300,200,5,1,1,1,Inactivo
 04-003,ELEC04,Monitores,Asus OLED 4k,4000,7000,10,5,0,0,Activo
+06-02-004,ELEC06,Redes y conectividad,Procesador Intel Core i5 3200,5000,7000,10,4,10,40,Activo
+01-009,ELEC01,Computadoras y laptops,ASUS TUF A16 GAMING i9 RTX5090,25000,30000,15,5,20,120,Activo
+010,ELEC01,Computadoras y laptops,MacBook Air M3,25000,15000,10,5,15,120,Activo
+02-011,ELEC02,Componentes de PC,Lenovo ThinkPad,4500,400,8,6,12,500,Activo
+012,ELEC01,Computadoras y laptops,PC GAMER i7 RTX3060,4500,3000,10,5,12,45,Activo
+013,ELEC01,Computadoras y laptops,ASUS NoteBook,5000,8000,3,3,15,40,Activo
+015,ELEC01,Computadoras y laptops,HP Victus Razen5 AMD RYDON 7600,10000,15000,10,5,5,40,Activo
