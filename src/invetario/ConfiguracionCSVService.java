@@ -44,7 +44,7 @@ public class ConfiguracionCSVService {
         }
     }
 
-    // Lee todos los registros de configuracion.
+    // Lee configuracion y devuelve solo el registro mas reciente (registro unico activo).
     public List<ConfiguracionParametros> leerConfiguraciones() {
         List<ConfiguracionParametros> lista = new ArrayList<ConfiguracionParametros>();
         File archivo = new File(RUTA_ARCHIVO);
@@ -65,12 +65,24 @@ public class ConfiguracionCSVService {
             return new ArrayList<ConfiguracionParametros>();
         }
 
-        return lista;
+        // Si hay varios por historial anterior, solo usamos el ultimo como registro unico.
+        if (lista.isEmpty()) {
+            return lista;
+        }
+        ConfiguracionParametros ultimo = lista.get(lista.size() - 1);
+        List<ConfiguracionParametros> unico = new ArrayList<ConfiguracionParametros>();
+        unico.add(ultimo);
+        return unico;
     }
 
     // Registra un nuevo conjunto de parametros.
     public void registrarConfiguracion(ConfiguracionParametros parametros) {
         List<ConfiguracionParametros> lista = leerConfiguraciones();
+
+        // Solo permitimos un registro unico.
+        if (!lista.isEmpty()) {
+            throw new IllegalArgumentException("Ya existe una configuracion registrada. Usa Editar.");
+        }
 
         // Evitamos duplicar registro exactamente igual.
         for (ConfiguracionParametros actual : lista) {

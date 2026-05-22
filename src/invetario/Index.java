@@ -127,6 +127,8 @@ public class Index extends JFrame {
     private JButton btnMenuConfiguracion;
     // Panel del modulo de movimientos dentro del dashboard.
     private MovimientoInventarioPanel panelMovimientoInventario;
+    // Panel del modulo de analisis dentro del dashboard.
+    private AnalisisInventarioPanel panelAnalisisInventario;
     // Panel del modulo de configuracion dentro del dashboard.
     private ConfiguracionPanel panelConfiguracion;
 
@@ -273,7 +275,7 @@ public class Index extends JFrame {
 
 
 
-
+            //aqui le damos forma a la tabla para el menu
 
         panelMenuLateral.add(Box.createVerticalStrut(30));
 
@@ -296,8 +298,8 @@ public class Index extends JFrame {
 
         // Creamos el boton del modulo analisis.
         btnMenuAnalisis = crearBotonMenu("Analisis");
-        // Dejamos este boton solo visible para usarlo despues.
-        deshabilitarBotonMenu(btnMenuAnalisis);
+        // Al dar clic mostramos analisis dentro del dashboard.
+        btnMenuAnalisis.addActionListener(e -> mostrarVista("ANALISIS"));
 
         // Creamos el boton del modulo reportes.
         btnMenuReportes = crearBotonMenu("Reportes");
@@ -380,6 +382,9 @@ public class Index extends JFrame {
             actualizarTablaProductos();
         });
         panelTarjetas.add(panelMovimientoInventario, "MOVIMIENTOS");
+        // Creamos y agregamos tarjeta de analisis.
+        panelAnalisisInventario = new AnalisisInventarioPanel();
+        panelTarjetas.add(panelAnalisisInventario, "ANALISIS");
         // Creamos y agregamos tarjeta de configuracion.
         panelConfiguracion = new ConfiguracionPanel();
         panelTarjetas.add(panelConfiguracion, "CONFIGURACION");
@@ -665,6 +670,10 @@ public class Index extends JFrame {
         if ("MOVIMIENTOS".equals(nombreVista) && panelMovimientoInventario != null) {
             panelMovimientoInventario.refrescarDatos();
         }
+        // Si entra a analisis refrescamos calculos y tablas.
+        if ("ANALISIS".equals(nombreVista) && panelAnalisisInventario != null) {
+            panelAnalisisInventario.refrescarDatos();
+        }
         // Si entra a configuracion refrescamos datos actuales.
         if ("CONFIGURACION".equals(nombreVista) && panelConfiguracion != null) {
             panelConfiguracion.refrescarDatos();
@@ -740,6 +749,12 @@ public class Index extends JFrame {
                 lblTituloPrincipal.setText("Movimientos de Inventario");
             }
             lblResumenSuperior.setText("Registra entradas, salidas y ajustes en la misma interfaz del sistema.");
+        // Si el modulo es analisis mostramos descripcion del reporte.
+        } else if ("ANALISIS".equals(nombreVista)) {
+            if (lblTituloPrincipal != null) {
+                lblTituloPrincipal.setText("Analisis de Inventario");
+            }
+            lblResumenSuperior.setText("Reporte no editable con consumo total, ABC, EOQ, punto de reorden e indicadores.");
         // Si el modulo es configuracion mostramos su descripcion.
         } else if ("CONFIGURACION".equals(nombreVista)) {
             if (lblTituloPrincipal != null) {

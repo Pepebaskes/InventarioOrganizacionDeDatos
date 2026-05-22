@@ -4,10 +4,13 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/rafae/OneDrive/Documents/NetBeansProject/Invetario/src/invetario/Producto.java</file>
+            <file>file:/C:/Users/rafae/OneDrive/Documents/NetBeansProject/Invetario/src/invetario/ConfiguracionParametros.java</file>
+            <file>file:/C:/Users/rafae/OneDrive/Documents/NetBeansProject/Invetario/src/invetario/AnalisisInventarioPanel.java</file>
             <file>file:/C:/Users/rafae/OneDrive/Documents/NetBeansProject/Invetario/src/invetario/ProductoDAO.java</file>
-            <file>file:/C:/Users/rafae/OneDrive/Documents/NetBeansProject/Invetario/MovimientoInventarioDetalle.csv</file>
+            <file>file:/C:/Users/rafae/OneDrive/Documents/NetBeansProject/Invetario/src/invetario/HistorialMovimientoProductoItem.java</file>
             <file>file:/C:/Users/rafae/OneDrive/Documents/NetBeansProject/Invetario/src/invetario/Index.java</file>
-            <file>file:/C:/Users/rafae/OneDrive/Documents/NetBeansProject/Invetario/MovimientoInventarioEncabezado.csv</file>
+            <file>file:/C:/Users/rafae/OneDrive/Documents/NetBeansProject/Invetario/src/invetario/AnalisisInventarioItem.java</file>
+            <file>file:/C:/Users/rafae/OneDrive/Documents/NetBeansProject/Invetario/src/invetario/AnalisisInventarioService.java</file>
         </group>
     </open-files>
 </project-private>

@@ -116,6 +116,8 @@ public class ConfiguracionPanel extends JPanel {
         tablaConfiguraciones.setRowHeight(26);
         tablaConfiguraciones.setSelectionBackground(new Color(219, 234, 254));
         tablaConfiguraciones.setSelectionForeground(new Color(33, 37, 41));
+        // Compactamos la tabla para que no se vea tan grande.
+        tablaConfiguraciones.setPreferredScrollableViewportSize(new java.awt.Dimension(520, 58));
 
         DefaultTableCellRenderer renderDerecha = new DefaultTableCellRenderer();
         renderDerecha.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -146,10 +148,13 @@ public class ConfiguracionPanel extends JPanel {
 
         JScrollPane scrollTabla = new JScrollPane(tablaConfiguraciones);
         scrollTabla.setBorder(BorderFactory.createTitledBorder("Registros guardados"));
+        // Tamano compacto del scroll para una sola fila, pero mas visible al centro.
+        scrollTabla.setPreferredSize(new java.awt.Dimension(0, 120));
 
         JPanel panelCentro = new JPanel(new BorderLayout(0, 12));
         panelCentro.setOpaque(false);
         panelCentro.add(panelCampos, BorderLayout.NORTH);
+        // Colocamos la tabla al centro para que no quede tan abajo.
         panelCentro.add(scrollTabla, BorderLayout.CENTER);
         panelTarjeta.add(panelCentro, BorderLayout.CENTER);
 
@@ -221,6 +226,9 @@ public class ConfiguracionPanel extends JPanel {
                 parametros.getTiempoEntrega()
             });
         }
+
+        // Ajustamos botones segun exista o no un registro unico.
+        actualizarEstadoBotonesSegunDatos();
     }
 
     // Carga fila seleccionada en los textfields.
@@ -234,16 +242,17 @@ public class ConfiguracionPanel extends JPanel {
         txtCostoPedido.setText(modeloTablaConfiguraciones.getValueAt(fila, 0).toString());
         txtCostoMantenimiento.setText(modeloTablaConfiguraciones.getValueAt(fila, 1).toString());
         txtTiempoEntrega.setText(modeloTablaConfiguraciones.getValueAt(fila, 2).toString());
+        // Al seleccionar fila, habilitamos editar.
         btnEditar.setEnabled(true);
         lblEstado.setText("Registro seleccionado. Puedes modificar y presionar Editar.");
     }
 
     // Registra un nuevo conjunto de parametros.
     private void registrarConfiguracion() {
-        // Si hay un registro seleccionado, no permitimos registrar para evitar duplicidad accidental.
-        if (indiceSeleccionado >= 0) {
+        // Si ya existe registro unico, bloqueamos registrar.
+        if (modeloTablaConfiguraciones.getRowCount() > 0) {
             JOptionPane.showMessageDialog(this,
-                    "Tienes un registro seleccionado. Usa Editar o presiona Limpiar para registrar uno nuevo.",
+                    "Solo se permite un registro de configuracion. Usa Editar.",
                     "Registro bloqueado", JOptionPane.WARNING_MESSAGE);
             return;
         }
@@ -291,6 +300,7 @@ public class ConfiguracionPanel extends JPanel {
         indiceSeleccionado = -1;
         btnEditar.setEnabled(false);
         tablaConfiguraciones.clearSelection();
+        actualizarEstadoBotonesSegunDatos();
         txtCostoPedido.requestFocusInWindow();
     }
 
@@ -360,9 +370,20 @@ public class ConfiguracionPanel extends JPanel {
         txtCostoPedido.addActionListener(e -> txtCostoMantenimiento.requestFocusInWindow());
         txtCostoMantenimiento.addActionListener(e -> txtTiempoEntrega.requestFocusInWindow());
         txtTiempoEntrega.addActionListener(e -> {
-            if (indiceSeleccionado >= 0) {
+            // Si hay fila seleccionada vamos a editar.
+            if (indiceSeleccionado >= 0 && btnEditar.isEnabled()) {
                 btnEditar.requestFocusInWindow();
+                return;
+            }
+
+            // Si ya existe un registro unico, llevamos a tabla para seleccionar y editar.
+            if (modeloTablaConfiguraciones.getRowCount() > 0) {
+                tablaConfiguraciones.requestFocusInWindow();
+                if (tablaConfiguraciones.getSelectedRow() < 0) {
+                    tablaConfiguraciones.setRowSelectionInterval(0, 0);
+                }
             } else {
+                // Si no hay registro, permitimos registrar.
                 btnRegistrar.requestFocusInWindow();
             }
         });
@@ -450,6 +471,21 @@ public class ConfiguracionPanel extends JPanel {
                 btnLimpiar.doClick();
             }
         });
+    }
+
+    // Ajusta botones al escenario de registro unico.
+    private void actualizarEstadoBotonesSegunDatos() {
+        boolean existeRegistro = modeloTablaConfiguraciones.getRowCount() > 0;
+        // Registrar solo si no existe registro unico.
+        btnRegistrar.setEnabled(!existeRegistro);
+        // Editar solo con seleccion explicita en tabla.
+        btnEditar.setEnabled(indiceSeleccionado >= 0);
+        if (existeRegistro && indiceSeleccionado < 0) {
+            lblEstado.setText("Ya existe un registro unico. Seleccionalo en la tabla para editar.");
+        }
+        if (!existeRegistro) {
+            lblEstado.setText("No hay registro. Captura los datos y presiona Registrar.");
+        }
     }
 
     // Permite mover foco entre botones con flechas izquierda/derecha.
